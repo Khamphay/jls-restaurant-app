@@ -1,10 +1,9 @@
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:restaurant_app/component/orderpage.dart';
-import 'package:restaurant_app/component/paymentpage.dart';
+import 'package:restaurant_app/component/paymentlistpage.dart';
 import 'package:restaurant_app/model/category.dart';
 import 'package:restaurant_app/model/menuitems.dart';
-import 'package:restaurant_app/model/menus.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage(
@@ -27,7 +26,7 @@ final _itemPage = <Widget>[
   //             categories: widget.categories, categoryId: widget.categoryId),
   const MenuItems(),
   const OrderPage(),
-  const PaymentPage()
+  const PaymentListPage()
 ];
 
 class _MenuPageState extends State<MenuPage> {

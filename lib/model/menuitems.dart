@@ -119,39 +119,54 @@ class _MenuItemsState extends State<MenuItems> {
                                 child: Column(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    Row(
+                                    Stack(
+                                      alignment: AlignmentDirectional.topCenter,
                                       children: [
-                                        const Icon(
-                                            Icons.add_shopping_cart_rounded,
-                                            color: Colors.deepPurpleAccent,
-                                            size: 20),
-                                        Text(0.toString(),
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color:
-                                                    Colors.deepPurpleAccent)),
-                                        const Spacer(),
-                                        IconButton(
-                                            icon: const Icon(
-                                                Icons.favorite_border_outlined),
-                                            onPressed: () {})
+                                        Positioned(
+                                          child: Row(
+                                            children: [
+                                              const Icon(
+                                                  Icons
+                                                      .add_shopping_cart_rounded,
+                                                  color:
+                                                      Colors.deepPurpleAccent,
+                                                  size: 20),
+                                              Text(0.toString(),
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors
+                                                          .deepPurpleAccent)),
+                                              const Spacer(),
+                                              IconButton(
+                                                  icon: const Icon(Icons
+                                                      .favorite_border_outlined),
+                                                  onPressed: () {})
+                                            ],
+                                          ),
+                                        ),
+                                        Positioned(
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            child: SizedBox(
+                                              // margin: const EdgeInsets.only(
+                                              //     top: 10),
+                                              height: 110,
+                                              width: 110,
+                                              child: FadeInImage.memoryNetwork(
+                                                  fit: BoxFit.fill,
+                                                  placeholder:
+                                                      kTransparentImage,
+                                                  image: imageUrl +
+                                                      "/${snapshot.data![index].image}"),
+                                            ),
+                                          ),
+                                        ),
                                       ],
                                     ),
-                                    Container(
-                                      width: 50,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(40)),
-                                      child: FadeInImage.memoryNetwork(
-                                          fit: BoxFit.fill,
-                                          fadeInCurve: Curves.easeIn,
-                                          placeholder: kTransparentImage,
-                                          image: imageUrl +
-                                              "/${snapshot.data![index].image}"),
-                                    ),
                                     const SizedBox(
-                                      height: 20,
+                                      height: 10,
                                     ),
                                     Column(
                                       mainAxisAlignment: MainAxisAlignment.end,
@@ -197,22 +212,20 @@ class _MenuItemsState extends State<MenuItems> {
                                                 child: SingleChildScrollView(
                                                   child: Column(
                                                     children: [
-                                                      Container(
-                                                        width: 150,
-                                                        height: 150,
-                                                        decoration: BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20)),
-                                                        child: FadeInImage
-                                                            .memoryNetwork(
-                                                                fit:
-                                                                    BoxFit.fill,
-                                                                placeholder:
-                                                                    kTransparentImage,
-                                                                image: imageUrl +
-                                                                    "/$_image"),
+                                                      ClipRRect(
+                                                        borderRadius: BorderRadius.circular(10),
+                                                        child: SizedBox(
+                                                          width: 150,
+                                                          height: 150,
+                                                          child: FadeInImage
+                                                              .memoryNetwork(
+                                                                  fit:
+                                                                      BoxFit.fill,
+                                                                  placeholder:
+                                                                      kTransparentImage,
+                                                                  image: imageUrl +
+                                                                      "/$_image"),
+                                                        ),
                                                       ),
                                                       Column(
                                                         crossAxisAlignment:

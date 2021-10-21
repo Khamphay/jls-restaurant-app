@@ -100,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                               Checkbox(
                                 activeColor:
                                     const Color.fromARGB(255, 128, 0, 255),
-                                value: this.isCheck,
+                                value: isCheck,
                                 onChanged: (isCheck) {
                                   setState(() {
                                     this.isCheck = !this.isCheck;
