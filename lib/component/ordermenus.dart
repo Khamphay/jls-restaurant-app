@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/component/paymentpage.dart';
+import 'package:restaurant_app/component/payment.dart';
 import 'package:restaurant_app/db/database_helper.dart';
 import 'package:restaurant_app/model/ordermenu.dart';
 import 'package:restaurant_app/model/source.dart';
@@ -50,27 +50,29 @@ class _OrderPageState extends State<OrderPage> {
               height: 45,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(width: 1, color: Colors.green),
+                // border: Border.all(width: 1, color: Colors.green),
                 color: Colors.green,
               ),
               child: InkWell(
-                hoverColor: Colors.yellow,
-                focusColor: Colors.yellow,
-                highlightColor: Colors.yellow,
                 child: Center(
                     child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Icon(Icons.payments),
+                    const Icon(Icons.done_all_rounded,
+                        color: Colors.white, size: 30),
                     const SizedBox(
-                      width: 10,
+                      width: 5,
                     ),
-                    Text("ຊຳລະເງີນ", style: head3)
+                    Text("ຢືນຢັນການສັ່ງ", style: head3)
                   ],
                 )),
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const PaymentPage()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => PaymentPage(
+                                showAppBar: true,
+                              )));
                 },
               ),
             ),
@@ -80,17 +82,18 @@ class _OrderPageState extends State<OrderPage> {
               height: 45,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(width: 1, color: Colors.deepPurple),
-                color: Colors.red,
+                // border: Border.all(width: 0, color: Colors.deepPurple),
+                color: Colors.red.shade800,
               ),
               child: InkWell(
                 child: Center(
                     child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    const Icon(Icons.delete),
+                    const Icon(Icons.delete_forever,
+                        color: Colors.white, size: 30),
                     const SizedBox(
-                      width: 10,
+                      width: 5,
                     ),
                     Text("ຍົກເລີກທັງໝົດ", style: head3)
                   ],
@@ -121,16 +124,17 @@ class _OrderPageState extends State<OrderPage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Container(
-                                  width: 100,
-                                  height: 100,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20)),
-                                  child: FadeInImage.memoryNetwork(
-                                      fit: BoxFit.fill,
-                                      placeholder: kTransparentImage,
-                                      image: imageUrl +
-                                          "/${orderList[index].image}"),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: SizedBox(
+                                    width: 100,
+                                    height: 100,
+                                    child: FadeInImage.memoryNetwork(
+                                        fit: BoxFit.fill,
+                                        placeholder: kTransparentImage,
+                                        image: imageUrl +
+                                            "/${orderList[index].image}"),
+                                  ),
                                 ),
                                 const Spacer(flex: 1),
                                 Column(
@@ -159,9 +163,10 @@ class _OrderPageState extends State<OrderPage> {
                                                   orderList[index].qty,
                                                   orderList[index].image)
                                               .then((value) => {
-                                                    if (value) refreshOrder(),
+                                                    if (value != null && value)
+                                                      refreshOrder(),
                                                     setState(() => {})
-                                              });
+                                                  });
                                         },
                                       ),
                                       IconButton(
@@ -203,15 +208,16 @@ class _OrderPageState extends State<OrderPage> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        Container(
-                          width: 150,
-                          height: 150,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20)),
-                          child: FadeInImage.memoryNetwork(
-                              fit: BoxFit.fill,
-                              placeholder: kTransparentImage,
-                              image: imageUrl + "/$image"),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: SizedBox(
+                            width: 150,
+                            height: 150,
+                            child: FadeInImage.memoryNetwork(
+                                fit: BoxFit.fill,
+                                placeholder: kTransparentImage,
+                                image: imageUrl + "/$image"),
+                          ),
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

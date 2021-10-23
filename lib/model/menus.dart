@@ -28,7 +28,7 @@ List<Menus> parseMenus(String responseBody) {
 }
 
 Future<List<Menus>> fetchMenus(int categoryId) async {
-  final response = await http.get(url + "/menus/${langsCode}/${categoryId}",
+  final response = await http.get(Uri.parse(url + "/menus/${langsCode}/${categoryId}"),
       headers: {'Authorization': token});
   if (response.statusCode == 200) {
     return parseMenus(response.body);

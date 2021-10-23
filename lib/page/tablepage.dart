@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:restaurant_app/model/category.dart';
-import 'package:restaurant_app/model/menuitems.dart';
 import 'package:restaurant_app/model/tables.dart';
-import 'package:restaurant_app/component/loginpage.dart';
+import 'package:restaurant_app/page/loginpage.dart';
 
-import 'package:restaurant_app/component/homepage.dart';
+import 'package:restaurant_app/page/homepage.dart';
 
 class homePage extends StatefulWidget {
   const homePage({Key? key}) : super(key: key);
@@ -50,7 +49,7 @@ class _homePageState extends State<homePage> {
       ),
       // drawer: Drawer(child: myDrawer(context)),
       body: SafeArea(
-        child: FutureBuilder<List<Tables>>(
+        child: FutureBuilder<Tables>(
             future: fetchTables(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
@@ -66,31 +65,33 @@ class _homePageState extends State<homePage> {
                 return GridView.count(
                   crossAxisCount: _axiesCount,
                   children:
-                      List.generate(snapshot.data![0].table.length, (index) {
+                      List.generate(snapshot.data!.table.length, (index) {
                     return Card(
                         margin: const EdgeInsets.all(10),
                         elevation: 2,
                         shadowColor: Colors.white,
-                        color: snapshot.data![0].table[index].status == 'empty'
+                        color: snapshot.data!.table[index].status == 'empty'
                             ? Colors.white
                             : Colors.blue,
                         child: InkWell(
+                          borderRadius: BorderRadius.circular(5),
                           onTap: () {
-                            int tableId = snapshot.data![0].table[index].id;
+                            String restaurant =
+                                snapshot.data!.restaurantName;
+                            int tableId = snapshot.data!.table[index].id;
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => MenuPage(
-                                        tableId: tableId,
-                                        categories: categories,
-                                        categoryId: categoryId)));
+                                        restaurant: restaurant,
+                                        tableId: tableId)));
                           },
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(snapshot.data![0].table[index].name),
-                              Text(snapshot.data![0].table[index].status ==
+                              Text(snapshot.data!.table[index].name),
+                              Text(snapshot.data!.table[index].status ==
                                       'empty'
                                   ? 'ຫວ່າງ'
                                   : 'ຈ້ອງ'),

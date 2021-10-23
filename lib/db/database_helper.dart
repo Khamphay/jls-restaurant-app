@@ -39,14 +39,14 @@ class DatabaseHelper {
     }
   }
 
-  Future<OrderMenu> readOrderById(int id) async {
+  Future<OrderMenu?> readOrderById(int id) async {
     final db = await dbInstace.database;
     final order = await db.query(tableName,
         columns: OrderFields.values,
         where: '${OrderFields.id}= ?',
         whereArgs: [id]);
 
-    return order.isNotEmpty ? OrderMenu.fromJson(order.first) : throw '';
+    return order.isNotEmpty ? OrderMenu.fromJson(order.first) : null;
   }
 
   Future<List<OrderMenu>> readAllOrder() async {
@@ -55,10 +55,16 @@ class DatabaseHelper {
     return orders.map((json) => OrderMenu.fromJson(json)).toList();
   }
 
-  Future<OrderMenu> createOrder(OrderMenu order) async {
+  // Future<OrderMenu> createOrder(OrderMenu order) async {
+  //   final db = await dbInstace.database;
+  //   final id = await db.insert(tableName, order.toJson());
+  //   return order.copy(id: id);
+  // }
+
+  //Todo: =====OR=====
+  Future<int> createOrder(OrderMenu order) async {
     final db = await dbInstace.database;
-    final id = await db.insert(tableName, order.toJson());
-    return order.copy(id: id);
+    return await db.insert(tableName, order.toJson());
   }
 
   Future<int> updateOrder(OrderMenu order) async {

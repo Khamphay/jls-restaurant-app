@@ -8,3 +8,5 @@ TextStyle head3B = const TextStyle(
     fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black);
 TextStyle head3 = const TextStyle(
     fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white);
+
+TextStyle subtitle = const TextStyle(color: Colors.black);

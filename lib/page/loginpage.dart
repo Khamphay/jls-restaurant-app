@@ -124,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                                 onTap: () =>
                                     Navigator.pushNamed(context, "/homepage"),
                                 child: Center(
-                                  child: Text("ເຂົ້າສູ່ລະບົບ", style: head3),
+                                  child: Text("ເຂົ້າສູ່ລະບົບ", style: head3, ),
                                 ),
                               ))
                         ],
