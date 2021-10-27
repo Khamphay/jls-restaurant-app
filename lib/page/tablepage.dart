@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/model/category.dart';
-import 'package:restaurant_app/model/tables.dart';
+import 'package:restaurant_app/model/category_model.dart';
+import 'package:restaurant_app/model/tables_model.dart';
 import 'package:restaurant_app/page/loginpage.dart';
 
 import 'package:restaurant_app/page/homepage.dart';
@@ -18,14 +18,16 @@ class _homePageState extends State<homePage> {
   int _axiesCount = 3;
   // bool _seleteColor = true;
   late Future<List<Category>> categories;
+  late Future<Tables> tables;
   late int categoryId;
 
   @override
   void initState() {
+    tables=fetchTables();
     categories = fetchCategory();
     categories.then((value) => categoryId = value[0].id);
     super.initState();
-    // fetchTables();
+    
   }
 
   @override
@@ -38,6 +40,9 @@ class _homePageState extends State<homePage> {
       appBar: AppBar(
         elevation: 0,
         title: const Text("ເລືອກໂຕະ"),
+        leading: IconButton(
+            icon: const Icon(Icons.navigate_before_rounded, size: 40),
+            onPressed: () => Navigator.pop(context)),
         actions: [
           IconButton(
               onPressed: () => {
@@ -50,7 +55,7 @@ class _homePageState extends State<homePage> {
       // drawer: Drawer(child: myDrawer(context)),
       body: SafeArea(
         child: FutureBuilder<Tables>(
-            future: fetchTables(),
+            future: tables,
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return Center(child: Text("${snapshot.error}"));
@@ -64,8 +69,7 @@ class _homePageState extends State<homePage> {
 
                 return GridView.count(
                   crossAxisCount: _axiesCount,
-                  children:
-                      List.generate(snapshot.data!.table.length, (index) {
+                  children: List.generate(snapshot.data!.table.length, (index) {
                     return Card(
                         margin: const EdgeInsets.all(10),
                         elevation: 2,
@@ -76,8 +80,7 @@ class _homePageState extends State<homePage> {
                         child: InkWell(
                           borderRadius: BorderRadius.circular(5),
                           onTap: () {
-                            String restaurant =
-                                snapshot.data!.restaurantName;
+                            String restaurant = snapshot.data!.restaurantName;
                             int tableId = snapshot.data!.table[index].id;
                             Navigator.push(
                                 context,
@@ -91,10 +94,9 @@ class _homePageState extends State<homePage> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(snapshot.data!.table[index].name),
-                              Text(snapshot.data!.table[index].status ==
-                                      'empty'
+                              Text(snapshot.data!.table[index].status == 'empty'
                                   ? 'ຫວ່າງ'
-                                  : 'ຈ້ອງ'),
+                                  : 'ບໍ່ຫວ່າງ'),
                             ],
                           ),
                         ));

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/model/bank.dart';
+import 'package:restaurant_app/model/bank_model.dart';
 import 'package:restaurant_app/model/source.dart';
 import 'package:restaurant_app/model/summary.dart';
 import 'package:restaurant_app/style/textstyle.dart';
@@ -13,7 +13,11 @@ class QRCodePayment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("ຈ່າຍຜ່ານທະນາຄານ ${bank.bank}")),
+        appBar: AppBar(title: Text("ຈ່າຍຜ່ານທະນາຄານ ${bank.bank}"),
+          leading: IconButton(
+              icon: const Icon(Icons.navigate_before_rounded, size: 40),
+              onPressed: () => Navigator.pop(context)),
+        ),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(10),

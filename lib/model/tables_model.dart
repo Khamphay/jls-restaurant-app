@@ -44,7 +44,7 @@ class Table {
 
 //Todo: Use Decode Object Data respone from API
 Future<Tables> fetchTables() async {
-  final response = await http.get(Uri.parse(url + "/tables/$tableId"),
+  final response = await http.get(Uri.parse(url + "/tables/$branch_Id"),
       headers: {'Authorization': token});
   if (response.statusCode == 200) {
     return Tables.fromJson(response.body);
@@ -56,20 +56,20 @@ Future<Tables> fetchTables() async {
 }
 
 //Todo: Use Decode Array Data respone from API
-List<Tables> parseTables(String responseBody) {
-  final parse = json.decode(responseBody).cast<Map<String, dynamic>>();
-  return parse.map<Tables>((json) => Tables.fromJson(json)).toList();
-}
+// List<Tables> parseTables(String responseBody) {
+//   final parse = json.decode(responseBody).cast<Map<String, dynamic>>();
+//   return parse.map<Tables>((json) => Tables.fromJson(json)).toList();
+// }
 
-Future<List<Tables>> fetchArrayTables() async {
-  final response = await http.get(Uri.parse(url + "/tables/$tableId"),
-      headers: {'Authorization': token});
-  if (response.statusCode == 200) {
-    return parseTables(response.body);
-  } else if (response.statusCode == 403) {
-    throw "No token accepted";
-  } else {
-    throw "Net work error";
-  }
-}
+// Future<List<Tables>> fetchArrayTables() async {
+//   final response = await http.get(Uri.parse(url + "/tables/$tableId"),
+//       headers: {'Authorization': token});
+//   if (response.statusCode == 200) {
+//     return parseTables(response.body);
+//   } else if (response.statusCode == 403) {
+//     throw "No token accepted";
+//   } else {
+//     throw "Net work error";
+//   }
+// }
 //Todo:===================

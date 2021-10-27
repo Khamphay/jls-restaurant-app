@@ -17,7 +17,12 @@ class _CashPaymentState extends State<CashPayment> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("ຈ່າຍເງີນສົດ")),
+        appBar: AppBar(
+          title: const Text("ຈ່າຍເງີນສົດ"),
+          leading: IconButton(
+              icon: const Icon(Icons.navigate_before_rounded, size: 40),
+              onPressed: () => Navigator.pop(context)),
+        ),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(10),

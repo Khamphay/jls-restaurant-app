@@ -25,7 +25,7 @@ List<Category> parseCategory(String responseBody) {
 
 Future<List<Category>> fetchCategory() async {
   final response = await http.get(
-      Uri.parse(url + "/categories/${langsCode}/${restaurantId}&${branchId}"),
+      Uri.parse(url + "/categories/${langsCode}/${restaurant_Id}&${branch_Id}"),
       headers: {'Authorization': token});
   if (response.statusCode == 200) {
     return parseCategory(response.body);

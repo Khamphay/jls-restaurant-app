@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:path/path.dart';
-import 'package:restaurant_app/model/ordermenu.dart';
+import 'package:restaurant_app/model/ordermenu_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
@@ -55,17 +55,17 @@ class DatabaseHelper {
     return orders.map((json) => OrderMenu.fromJson(json)).toList();
   }
 
-  // Future<OrderMenu> createOrder(OrderMenu order) async {
-  //   final db = await dbInstace.database;
-  //   final id = await db.insert(tableName, order.toJson());
-  //   return order.copy(id: id);
-  // }
+  Future<OrderMenu> createOrder(OrderMenu order) async {
+    final db = await dbInstace.database;
+    final id = await db.insert(tableName, order.toJson());
+    return order.copy(id: id);
+  }
 
   //Todo: =====OR=====
-  Future<int> createOrder(OrderMenu order) async {
-    final db = await dbInstace.database;
-    return await db.insert(tableName, order.toJson());
-  }
+  // Future<int> createOrder(OrderMenu order) async {
+  //   final db = await dbInstace.database;
+  //   return await db.insert(tableName, order.toJson());
+  // }
 
   Future<int> updateOrder(OrderMenu order) async {
     final db = await dbInstace.database;

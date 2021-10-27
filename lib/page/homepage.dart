@@ -4,6 +4,8 @@ import 'package:restaurant_app/component/ordermenus.dart';
 import 'package:restaurant_app/component/paymentlist.dart';
 import 'package:restaurant_app/component/payment.dart';
 import 'package:restaurant_app/component/menulist.dart';
+import 'package:restaurant_app/db/database_helper.dart';
+import 'package:restaurant_app/page/setting_printerpage.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({Key? key, required this.restaurant, required this.tableId})
@@ -17,9 +19,23 @@ class MenuPage extends StatefulWidget {
 
 class _MenuPageState extends State<MenuPage> {
   // String _titlebar = "ເລືອກເມນູອາຫານ";
+  int countOrder = 0;
+
+  bool isLoading = false;
   @override
   void initState() {
     super.initState();
+    refreshOrder();
+  }
+
+  Future refreshOrder() async {
+    setState(() => isLoading = true);
+
+    DatabaseHelper.dbInstace
+        .readAllOrder()
+        .then((value) => countOrder = value.length);
+
+    setState(() => isLoading = false);
   }
 
   @override
@@ -29,14 +45,31 @@ class _MenuPageState extends State<MenuPage> {
       initialIndex: 0,
       child: Scaffold(
           appBar: AppBar(
+             leading: IconButton(
+                icon: const Icon(Icons.navigate_before_rounded, size: 40),
+                onPressed: () => Navigator.pop(context)),
             title: Text(widget.restaurant),
             elevation: 0,
+            actions: [
+              IconButton(
+                  onPressed: () => Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const PrinterPage())),
+                  icon: const Icon(Icons.settings))
+            ],
           ),
           body: TabBarView(
             children: _itemPage,
           ),
           bottomNavigationBar: ConvexAppBar.badge(
-            const <int, dynamic>{1: "2", 2: "!", 3: "4"},
+            <int, dynamic>{
+              1: isLoading
+                  ? null
+                  : (countOrder > 0)
+                      ? countOrder
+                      : null,
+              2: "!",
+              3: "4"
+            },
             badgeMargin:
                 const EdgeInsets.only(left: 25, top: 0, bottom: 30, right: 0),
             backgroundColor: const Color.fromARGB(255, 128, 0, 255),
@@ -63,7 +96,7 @@ class _MenuPageState extends State<MenuPage> {
 final _itemPage = <Widget>[
   const MenuItems(),
   const OrderPage(),
-  PaymentPage(showAppBar: false),
+  const PaymentPage(showAppBar: false),
   const PaymentListPage()
 ];
 

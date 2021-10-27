@@ -46,7 +46,7 @@ class Coupons {
 
 Future<Coupons?> fetchCoupons(String code) async {
   final response = await http.get(
-      Uri.parse(url + "/coupons/coupon/$branchId&$code"),
+      Uri.parse(url + "/coupons/coupon/$branch_Id&$code"),
       headers: {'Authorization': token});
   if (response.statusCode == 200) {
     return Coupons.fromJson(response.body);

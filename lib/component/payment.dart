@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:restaurant_app/db/database_helper.dart';
-import 'package:restaurant_app/model/coupon.dart';
-import 'package:restaurant_app/model/ordermenu.dart';
+import 'package:restaurant_app/model/coupon_model.dart';
+import 'package:restaurant_app/model/ordermenu_model.dart';
 import 'package:restaurant_app/model/summary.dart';
 import 'package:restaurant_app/page/bankpage.dart';
 import 'package:restaurant_app/page/cash_paypage.dart';
+import 'package:restaurant_app/style/color.dart';
 import 'package:restaurant_app/style/textstyle.dart';
 
 class PaymentPage extends StatefulWidget {
@@ -51,7 +52,14 @@ class _PaymentPageState extends State<PaymentPage> {
     final double _shortSide = MediaQuery.of(context).size.shortestSide;
     final Orientation _orientation = MediaQuery.of(context).orientation;
     return Scaffold(
-      appBar: widget.showAppBar ? AppBar(title: const Text("ຊຳລະເງີນ")) : null,
+      appBar: widget.showAppBar
+          ? AppBar(
+              title: const Text("ຊຳລະເງີນ"),
+              leading: IconButton(
+                  icon: const Icon(Icons.navigate_before_rounded, size: 40),
+                  onPressed: () => Navigator.pop(context)),
+            )
+          : null,
       body: SafeArea(
         child: Column(
           children: [
@@ -100,7 +108,7 @@ class _PaymentPageState extends State<PaymentPage> {
                               _warning = "ຄູ່ປອງນີ້ໝົດອາຍູແລ້ວ";
                             } else {
                               _discount = coupon.percentDiscount;
-                              _warning="";
+                              _warning = "";
                             }
                             setState(() {});
                           }),
@@ -116,7 +124,7 @@ class _PaymentPageState extends State<PaymentPage> {
                     )
                   : orderList.isEmpty
                       ? const Center(
-                          child: Text("ບໍ່ມີຂໍ້ມູນ"),
+                          child: Text("ບໍ່ມີລາຍການ order ທີ່ຄ້າງຈ່າຍ"),
                         )
                       : ListView.builder(
                           itemCount: orderList.length,
@@ -173,21 +181,32 @@ class _PaymentPageState extends State<PaymentPage> {
               labelBackgroundColor: Colors.blueAccent.shade100,
               label: "ຈ່າຍຜ່ານ QR Code",
               child: const Icon(Icons.qr_code_2_rounded),
-              onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => BankPager(summary: summary)))),
+              onTap: () => (summary.qty > 0 && summary.allMoneyPay > 0)
+                  ? Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => BankPager(summary: summary)))
+                  : null),
           SpeedDialChild(
               backgroundColor: Colors.green.shade100,
               labelBackgroundColor: Colors.green.shade100,
               label: "ຈ່າຍເງີນສົດ",
               child: const Icon(Icons.payments_outlined),
-              onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => CashPayment(summary: summary))))
+              onTap: () => (summary.qty > 0 && summary.allMoneyPay > 0)
+                  ? Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CashPayment(summary: summary)))
+                  : null)
         ],
       ),
+    );
+  }
+
+  Widget _snakBarWarning() {
+    return SnackBar(
+      content: const Text("ບໍ່ມີລາຍການ order ທີ່ຄ້າງຈ່າຍ"),
+      action: SnackBarAction(label: "OK", onPressed: () {}),
     );
   }
 

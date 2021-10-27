@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/model/bank.dart';
+import 'package:restaurant_app/model/bank_model.dart';
 import 'package:restaurant_app/model/source.dart';
 import 'package:restaurant_app/model/summary.dart';
 import 'package:restaurant_app/page/qrcode_paypage.dart';
@@ -22,7 +22,11 @@ class _BankPagerState extends State<BankPager> {
     final Orientation _orientation = MediaQuery.of(context).orientation;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("ເລືອກທະນາຄານ")),
+      appBar: AppBar(title: const Text("ເລືອກທະນາຄານ"),
+        leading: IconButton(
+            icon: const Icon(Icons.navigate_before_rounded, size: 40),
+            onPressed: () => Navigator.pop(context)),
+      ),
       body: FutureBuilder<List<Banks>>(
         future: fetchBanks(restaurantId, branchId),
         builder: (context, snapshot) {
