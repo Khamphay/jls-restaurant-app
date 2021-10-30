@@ -1,33 +1,100 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
+
 import 'package:restaurant_app/model/source.dart';
 
 class Tables {
+  final int? id;
   final int restaurantId;
-  final String restaurantName;
+  final String? restaurantName;
   final int branchId;
-  final String branchName;
-  final String phone;
-  final String status;
-  final List<Table> table;
+  final String? branchName;
+  final String? phone;
+  final String status; //todo: enum("empty", "reserved", "concatenate")
+  final List<Table>? table;
+  Tables({
+    required this.id,
+    required this.restaurantId,
+    required this.restaurantName,
+    required this.branchId,
+    required this.branchName,
+    required this.phone,
+    required this.status,
+    required this.table,
+  });
 
-  Tables(this.restaurantId, this.restaurantName, this.branchId, this.branchName,
-      this.phone, this.status, this.table);
-  factory Tables.fromMap(Map<String, dynamic> data) {
-    return Tables(
-        data["restaurantId"],
-        data["restaurantName"],
-        data["branchId"],
-        data["branchName"],
-        data["phone"],
-        data["status"],
-        List<Table>.from(data["table"].map((item) => Table.fromMap(item)))
-            .toList());
+  Map<String, dynamic> toMap() {
+    return {
+      'tableId': id,
+      'restaurantId': restaurantId,
+      'restaurantName': restaurantName,
+      'branchId': branchId,
+      'branchName': branchName,
+      'phone': phone,
+      'status': status
+    };
   }
 
-  factory Tables.fromJson(String responseBody) {
-    return Tables.fromMap(json.decode(responseBody));
+  factory Tables.fromMap(Map<String, dynamic> map) {
+    return Tables(
+      id: map['id'],
+      restaurantId: map['restaurantId'],
+      restaurantName: map['restaurantName'],
+      branchId: map['branchId'],
+      branchName: map['branchName'],
+      phone: map['phone'],
+      status: map['status'],
+      table: List<Table>.from(map['table']?.map((x) => Table.fromMap(x))),
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory Tables.fromJson(String source) => Tables.fromMap(json.decode(source));
+
+//Todo: Use Decode Object Data respone from API
+  static Future<Tables> fetchTables() async {
+    final response = await http.get(Uri.parse(url + "/tables/$branch_Id"),
+        headers: {'Authorization': token});
+    if (response.statusCode == 200) {
+      return Tables.fromJson(response.body);
+    } else if (response.statusCode == 403) {
+      throw "No token accepted";
+    } else {
+      throw "Net work error";
+    }
+  }
+
+//Todo: Use Decode Array Data respone from API
+/*List<Tables> parseTables(String responseBody) {
+  final parse = json.decode(responseBody).cast<Map<String, dynamic>>();
+  return parse.map<Tables>((json) => Tables.fromJson(json)).toList();
+}
+
+Future<List<Tables>> fetchArrayTables() async {
+  final response = await http.get(Uri.parse(url + "/tables/$tableId"),
+      headers: {'Authorization': token});
+  if (response.statusCode == 200) {
+    return parseTables(response.body);
+  } else if (response.statusCode == 403) {
+    throw "No token accepted";
+  } else {
+    throw "Net work error";
+  }
+}*/
+//Todo:===================
+
+  static Future<int> putTables(Tables table) async {
+    final puttable = await http.put(Uri.parse(url + "/tables/update-status"),
+        headers: {'Authorization': token, 'content-type': 'application/json'},
+        body: table.toJson());
+    if (puttable.statusCode == 201) {
+      return puttable.body.length;
+    } else {
+      throw Exception("Error");
+    }
   }
 }
 
@@ -41,35 +108,3 @@ class Table {
     return Table(item["id"], item["name"], item["status"]);
   }
 }
-
-//Todo: Use Decode Object Data respone from API
-Future<Tables> fetchTables() async {
-  final response = await http.get(Uri.parse(url + "/tables/$branch_Id"),
-      headers: {'Authorization': token});
-  if (response.statusCode == 200) {
-    return Tables.fromJson(response.body);
-  } else if (response.statusCode == 403) {
-    throw "No token accepted";
-  } else {
-    throw "Net work error";
-  }
-}
-
-//Todo: Use Decode Array Data respone from API
-// List<Tables> parseTables(String responseBody) {
-//   final parse = json.decode(responseBody).cast<Map<String, dynamic>>();
-//   return parse.map<Tables>((json) => Tables.fromJson(json)).toList();
-// }
-
-// Future<List<Tables>> fetchArrayTables() async {
-//   final response = await http.get(Uri.parse(url + "/tables/$tableId"),
-//       headers: {'Authorization': token});
-//   if (response.statusCode == 200) {
-//     return parseTables(response.body);
-//   } else if (response.statusCode == 403) {
-//     throw "No token accepted";
-//   } else {
-//     throw "Net work error";
-//   }
-// }
-//Todo:===================

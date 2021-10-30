@@ -230,7 +230,8 @@ class _MenuItemsState extends State<MenuItems> {
                                                     Radius.circular(4))),
                                         child: ListTile(
                                           leading: Wrap(
-                                            crossAxisAlignment:WrapCrossAlignment.end,
+                                            crossAxisAlignment:
+                                                WrapCrossAlignment.end,
                                             children: [
                                               const Icon(
                                                   Icons

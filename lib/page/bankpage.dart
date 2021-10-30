@@ -28,7 +28,7 @@ class _BankPagerState extends State<BankPager> {
             onPressed: () => Navigator.pop(context)),
       ),
       body: FutureBuilder<List<Banks>>(
-        future: fetchBanks(restaurantId, branchId),
+        future: fetchBanks(restaurant_Id, branch_Id),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(child: Text("${snapshot.error}"));

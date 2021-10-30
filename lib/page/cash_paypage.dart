@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:restaurant_app/model/ordermenu_model.dart';
+import 'package:restaurant_app/model/source.dart';
 import 'package:restaurant_app/model/summary.dart';
 import 'package:restaurant_app/style/textstyle.dart';
 
 class CashPayment extends StatefulWidget {
-  const CashPayment({Key? key, required this.summary}) : super(key: key);
+  const CashPayment(
+      {Key? key, required this.summary, required this.orderdetails})
+      : super(key: key);
   final SummaryOrder summary;
+  final List<OrderDetail> orderdetails;
 
   @override
   _CashPaymentState createState() => _CashPaymentState();
@@ -12,7 +17,7 @@ class CashPayment extends StatefulWidget {
 
 class _CashPaymentState extends State<CashPayment> {
   var txtController = TextEditingController();
-  double withMoney = 0;
+  double receiveMoney = 0, moneyChange = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -99,11 +104,14 @@ class _CashPaymentState extends State<CashPayment> {
                                     if (txtController.text != "" &&
                                         double.parse(txtController.text) >
                                             widget.summary.allMoneyPay)
-                                      withMoney =
-                                          double.parse(txtController.text) -
-                                              widget.summary.allMoneyPay
+                                      {
+                                        receiveMoney =
+                                            double.parse(txtController.text),
+                                        moneyChange = receiveMoney -
+                                            widget.summary.allMoneyPay
+                                      }
                                     else
-                                      withMoney = 0,
+                                      moneyChange = 0,
                                     setState(() {}),
                                   },
                                 ),
@@ -116,7 +124,7 @@ class _CashPaymentState extends State<CashPayment> {
                                   children: [
                                     Text("ເງີນທອນ:", style: head3B),
                                     const Spacer(),
-                                    Text("$withMoney ກີບ", style: head3B),
+                                    Text("$moneyChange ກີບ", style: head3B),
                                   ],
                                 ),
                                 const SizedBox(
@@ -134,7 +142,26 @@ class _CashPaymentState extends State<CashPayment> {
                                       child: Center(
                                           child: Text("ຢືນຢັນການຊຳລະ",
                                               style: head3)),
-                                      onTap: () => {}),
+                                      onTap: () async {
+                                        final order = Order(
+                                            id: widget.summary.orderId,
+                                            restaurantId: restaurant_Id,
+                                            branchId: branch_Id,
+                                            tableId: widget.summary.tableId,
+                                            tableName: null,
+                                            bankId: null,
+                                            total: widget.summary.totalPrice,
+                                            moneyCoupon:
+                                                widget.summary.moneyDiscount,
+                                            moneyDiscount:
+                                                widget.summary.moneyDiscount,
+                                            moneyUpfrontPay: 0,
+                                            moneyReceived: receiveMoney,
+                                            moneyChange: moneyChange,
+                                            isStatus: "success",
+                                            paymentType: "cash",
+                                            referenceNumber: null);
+                                      }),
                                 ),
                               ],
                             ))

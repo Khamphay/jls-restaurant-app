@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_app/component/payment.dart';
 import 'package:restaurant_app/db/database_helper.dart';
 import 'package:restaurant_app/model/ordermenu_model.dart';
 import 'package:restaurant_app/model/source.dart';
+import 'package:restaurant_app/model/tables_model.dart';
 import 'package:restaurant_app/style/color.dart';
 import 'package:restaurant_app/style/textstyle.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -75,7 +75,7 @@ class _OrderPageState extends State<OrderPage> {
                   )),
                   onTap: () async {
                     final order = Order(
-                        orderId: null,
+                        id: null,
                         restaurantId: restaurant_Id,
                         branchId: branch_Id,
                         tableId: table_Id,
@@ -89,19 +89,20 @@ class _OrderPageState extends State<OrderPage> {
                         moneyChange: 0,
                         isStatus: 'pending',
                         paymentType: "pending",
-                        referenceNumber: null,
-                        orderDetail: null);
+                        referenceNumber: null);
                     final post = await Order.postOrder(order);
-                    if (post?.orderId != null) {
-                      final orderid = post?.orderId;
+                    if (post?.id != null) {
+                      final orderid = post?.id;
+                      var orderDetail = <OrderDetail>[];
                       for (var item in orderList) {
-                        final orderDetail = OrderDetail(
+                        orderDetail.add(OrderDetail(
                             id: null,
                             orderId: orderid ?? 0,
                             restaurantId: restaurant_Id,
                             branchId: branch_Id,
                             tableId: table_Id,
                             menuId: item.id,
+                            menuName: item.menuName, // can be null
                             bankId: null,
                             price: item.price,
                             amount: item.qty,
@@ -110,8 +111,33 @@ class _OrderPageState extends State<OrderPage> {
                             paymentType: "pending",
                             comment: null,
                             reason: null,
-                            referenceNumber: null);
-                        await postOrderDetail(orderDetail);
+                            referenceNumber: null));
+                      }
+                      final orderdetail =
+                          await OrderDetail.postOrderDetail(orderDetail);
+                      if (orderdetail.isNotEmpty) {
+                        final table = Tables(
+                            id: table_Id,
+                            restaurantId: restaurant_Id,
+                            restaurantName: null,
+                            branchId: branch_Id,
+                            branchName: null,
+                            phone: null,
+                            status: "reserved",
+                            table: null);
+                        await Tables.putTables(table) > 0
+                            ? await deleteAllOrder() > 0
+                                ? orderList.removeRange(0, orderList.length)
+                                : null
+                            : null;
+                        setState(() {});
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            backgroundColor: Colors.grey,
+                            content: const Text("ຢືນຢັນ Order ສຳເລັດແລ້ວ"),
+                            action: SnackBarAction(
+                              label: 'OK',
+                              onPressed: () {},
+                            )));
                       }
                     }
                   },
@@ -149,10 +175,7 @@ class _OrderPageState extends State<OrderPage> {
             child: isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : orderList.isEmpty
-                    ? const Text(
-                        'ບໍ່ມີ Order',
-                        style: TextStyle(color: Colors.white, fontSize: 24),
-                      )
+                    ? const Center(child: Text('ບໍ່ມີ Order ຄ້າງ'))
                     : ListView.builder(
                         key: listKey,
                         padding: const EdgeInsets.all(10),

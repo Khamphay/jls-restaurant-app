@@ -1,50 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:restaurant_app/db/database_helper.dart';
 import 'package:restaurant_app/model/coupon_model.dart';
 import 'package:restaurant_app/model/ordermenu_model.dart';
+import 'package:restaurant_app/model/source.dart';
 import 'package:restaurant_app/model/summary.dart';
 import 'package:restaurant_app/page/bankpage.dart';
 import 'package:restaurant_app/page/cash_paypage.dart';
-import 'package:restaurant_app/style/color.dart';
 import 'package:restaurant_app/style/textstyle.dart';
 
 class PaymentPage extends StatefulWidget {
-  const PaymentPage({Key? key, required this.showAppBar}) : super(key: key);
+  const PaymentPage(
+      {Key? key,
+      required this.showAppBar,
+      required this.order,
+      required this.orderId})
+      : super(key: key);
   final bool showAppBar;
+  final Order? order;
+  final int? orderId;
 
   @override
   _PaymentPageState createState() => _PaymentPageState();
 }
 
 class _PaymentPageState extends State<PaymentPage> {
-  late List<OrderMenu> orderList;
   bool isLoading = false;
-  int _discount = 0;
-  int _qty = 0;
-  double _sumPrice = 0;
-  double _paid = 0;
+  int _discount = 0, _qty = 0;
+  double _sumPrice = 0, _paid = 0;
   String _warning = "";
-  late SummaryOrder summary;
+ late SummaryOrder summary;
+  late Future<List<OrderDetail>> orderMenu;
   var couponController = TextEditingController();
-
+  var orderid, tableId;
   @override
   void initState() {
-    refreshOrder();
     super.initState();
-  }
-
-  Future refreshOrder() async {
-    setState(() => isLoading = true);
-
-    orderList = await DatabaseHelper.dbInstace.readAllOrder();
-    if (orderList.isNotEmpty) {
-      for (var element in orderList) {
-        _qty += element.qty;
-        _sumPrice += element.totalPrice;
-      }
-    }
-    setState(() => isLoading = false);
+    orderid = widget.order != null ? widget.order!.id : widget.orderId;
+    tableId = widget.order != null ? widget.order!.tableId : table_Id;
+    orderMenu = OrderDetail.fetchOderDetail(orderid);
+    summary = SummaryOrder(
+        tableId: tableId,
+        orderId: orderid,
+        qty: 0,
+        totalPrice: 0,
+        paid: 0,
+        balance: 0,
+        percentDiscount: 0,
+        moneyDiscount: 0,
+        allMoneyPay: 0);
   }
 
   @override
@@ -118,50 +121,45 @@ class _PaymentPageState extends State<PaymentPage> {
             const Divider(),
             Text("ລາຍການ Order ທັງໝົດ", style: head3B),
             Expanded(
-              child: isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : orderList.isEmpty
-                      ? const Center(
-                          child: Text("ບໍ່ມີລາຍການ order ທີ່ຄ້າງຈ່າຍ"),
-                        )
-                      : ListView.builder(
-                          itemCount: orderList.length,
-                          itemBuilder: (context, index) {
-                            return Column(
-                              children: [
-                                ListTile(
-                                  // leading: CircleAvatar(
-                                  //   backgroundColor: const Color.fromARGB(
-                                  //       255, 232, 232, 232),
-                                  //   child: Text("${index + 1}",
-                                  //       style: const TextStyle(
-                                  //           fontWeight: FontWeight.bold)),
-                                  // ),
-                                  title: Text(orderList[index].menuName),
-                                  subtitle: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                          "ຈຳນວນ: ${orderList[index].qty} x ${orderList[index].price}  ກີບ",
-                                          style: subtitle),
-                                      const Spacer(),
-                                      Text(
-                                          "ລວມ: ${orderList[index].totalPrice} ກີບ",
-                                          style: subtitle),
-                                    ],
-                                  ),
-                                ),
-                                //Todo: If read to the last item of 'orderList' is render one 'Sumary Widget'
-                                if (index == orderList.length - 1)
-                                  _showSummary()
-                              ],
-                            );
-                          },
-                        ),
-            ),
+                child: FutureBuilder<List<OrderDetail>>(
+              future: OrderDetail.fetchOderDetail(orderid),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(child: Text("${snapshot.error}"));
+                } else if (snapshot.connectionState == ConnectionState.done) {
+                  return ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        _sumPrice += snapshot.data![index].total;
+                        _qty += snapshot.data![index].amount;
+                        return Column(
+                          children: [
+                            ListTile(
+                              title: Text("${snapshot.data![index].menuName}"),
+                              subtitle: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      "ຈຳນວນ: ${snapshot.data![index].amount} x ${snapshot.data![index].price}  ກີບ",
+                                      style: subtitle),
+                                  const Spacer(),
+                                  Text(
+                                      "ລວມ: ${snapshot.data![index].total} ກີບ",
+                                      style: subtitle),
+                                ],
+                              ),
+                            ),
+                            //Todo: If read to the last item of 'orderList' is render one 'Sumary Widget'
+                            if (index == snapshot.data!.length - 1)
+                              _showSummary()
+                          ],
+                        );
+                      });
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
+              },
+            )),
             // Expanded()
           ],
         ),
@@ -192,11 +190,16 @@ class _PaymentPageState extends State<PaymentPage> {
               labelBackgroundColor: Colors.green.shade100,
               label: "ຈ່າຍເງີນສົດ",
               child: const Icon(Icons.payments_outlined),
-              onTap: () => (summary.qty > 0 && summary.allMoneyPay > 0)
-                  ? Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CashPayment(summary: summary)))
+              onTap: (summary.qty > 0 && summary.allMoneyPay > 0)
+                  ? () async {
+                      final orderdetails = await orderMenu;
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CashPayment(
+                                  summary: summary,
+                                  orderdetails: orderdetails)));
+                    }
                   : null)
         ],
       ),
@@ -215,7 +218,16 @@ class _PaymentPageState extends State<PaymentPage> {
     double _moneyDiscount = (_sumPrice * (_discount / 100));
     double _mustPay = _balance - _moneyDiscount;
     summary = SummaryOrder(
-        _qty, _sumPrice, _paid, _balance, _discount, _moneyDiscount, _mustPay);
+        tableId: tableId,
+        orderId: orderid,
+        qty: _qty,
+        totalPrice: _sumPrice,
+        paid: _paid,
+        balance: _balance,
+        percentDiscount: _discount,
+        moneyDiscount: _moneyDiscount,
+        allMoneyPay: _mustPay);
+    //( _qty, _sumPrice, _paid, _balance, _discount, _moneyDiscount, _mustPay);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8.0),

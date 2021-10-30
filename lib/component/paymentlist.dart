@@ -12,7 +12,7 @@ class PaymentListPage extends StatelessWidget {
     return Container(
       color: backgroundColor,
       child: FutureBuilder<List<Order>>(
-          future: Order.fetchPlayerList(),
+          future: Order.fetchOrderList(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Center(
@@ -47,8 +47,8 @@ class PaymentListPage extends StatelessWidget {
                         snapshot.data![index].total;
                   }
                   return Padding(
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 5),
                       child: Card(
                           margin: const EdgeInsets.all(0),
                           child: Container(
@@ -94,7 +94,7 @@ class PaymentListPage extends StatelessWidget {
                                                 MainAxisAlignment.start,
                                             children: [
                                               Text(
-                                                  "${snapshot.data![index].orderId} ລາຍການ"),
+                                                  "${snapshot.data![index].id} ລາຍການ"),
                                               Text(
                                                   "${snapshot.data![index].total} ກີບ"),
                                               Text(
@@ -107,16 +107,21 @@ class PaymentListPage extends StatelessWidget {
                                     alignment: MainAxisAlignment.end,
                                     children: [
                                       ElevatedButton(
-                                          onPressed: snapshot
-                                                      .data![index].isStatus ==
-                                                  "pending"
-                                              ? () => Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          const PaymentPage(
-                                                              showAppBar: true)))
-                                              : null,
+                                          onPressed:
+                                              snapshot.data![index].isStatus ==
+                                                      "pending"
+                                                  ? () async {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) => PaymentPage(
+                                                                  showAppBar:
+                                                                      true,
+                                                                  order: snapshot
+                                                                          .data![
+                                                                      index],orderId: null)));
+                                                    }
+                                                  : null,
                                           child: const Text("ຊຳລະເງີນ"))
                                     ])
                               ],

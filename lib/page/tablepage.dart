@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:restaurant_app/model/category_model.dart';
+import 'package:restaurant_app/model/source.dart';
 import 'package:restaurant_app/model/tables_model.dart';
 import 'package:restaurant_app/page/loginpage.dart';
 
@@ -23,11 +24,10 @@ class _homePageState extends State<homePage> {
 
   @override
   void initState() {
-    tables=fetchTables();
+    tables = Tables.fetchTables();
     categories = fetchCategory();
     categories.then((value) => categoryId = value[0].id);
     super.initState();
-    
   }
 
   @override
@@ -69,34 +69,36 @@ class _homePageState extends State<homePage> {
 
                 return GridView.count(
                   crossAxisCount: _axiesCount,
-                  children: List.generate(snapshot.data!.table.length, (index) {
+                  children:
+                      List.generate(snapshot.data!.table!.length, (index) {
                     return Card(
                         margin: const EdgeInsets.all(10),
                         elevation: 2,
                         shadowColor: Colors.white,
-                        color: snapshot.data!.table[index].status == 'empty'
+                        color: snapshot.data!.table![index].status == 'empty'
                             ? Colors.white
                             : Colors.blue,
                         child: InkWell(
                           borderRadius: BorderRadius.circular(5),
                           onTap: () {
-                            String restaurant = snapshot.data!.restaurantName;
-                            int tableId = snapshot.data!.table[index].id;
+                            String? restaurant = snapshot.data!.restaurantName;
+                            table_Id = snapshot.data!.table![index].id;
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => MenuPage(
                                         restaurant: restaurant,
-                                        tableId: tableId)));
+                                        tableId: table_Id)));
                           },
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(snapshot.data!.table[index].name),
-                              Text(snapshot.data!.table[index].status == 'empty'
-                                  ? 'ຫວ່າງ'
-                                  : 'ບໍ່ຫວ່າງ'),
+                              Text(snapshot.data!.table![index].name),
+                              Text(
+                                  snapshot.data!.table![index].status == 'empty'
+                                      ? 'ຫວ່າງ'
+                                      : 'ບໍ່ຫວ່າງ'),
                             ],
                           ),
                         ));

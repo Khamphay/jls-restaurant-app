@@ -84,7 +84,7 @@ class OrderMenu {
 
 //Todo: Order model send to API
 class Order {
-  int? orderId;
+  int? id;
   int restaurantId;
   int branchId;
   int tableId;
@@ -99,9 +99,8 @@ class Order {
   String isStatus; //Todo: enum('pending','success','cancel')
   String paymentType; //Todo: enum('pending','cash','bank')
   String? referenceNumber;
-  List<OrderDetail>? orderDetail;
   Order(
-      {required this.orderId,
+      {required this.id,
       required this.restaurantId,
       required this.branchId,
       required this.tableId,
@@ -115,12 +114,11 @@ class Order {
       required this.moneyChange,
       required this.isStatus,
       required this.paymentType,
-      required this.referenceNumber,
-      required this.orderDetail});
+      required this.referenceNumber});
 
   Map<String, dynamic> toMap() {
     return {
-      'orderId': orderId,
+      'id': id,
       'restaurantId': restaurantId,
       'branchId': branchId,
       'tableId': tableId,
@@ -128,6 +126,7 @@ class Order {
       'total': total,
       'moneyCoupon': moneyCoupon,
       'moneyDiscount': moneyDiscount,
+      "moneyUpfrontPay": moneyUpfrontPay,
       'moneyReceived': moneyReceived,
       'moneyChange': moneyChange,
       'isStatus': isStatus,
@@ -140,40 +139,37 @@ class Order {
 
   factory Order.fromMap(Map<String, dynamic> map) {
     return Order(
-        orderId: map['orderId'],
+        id: map['id'],
         restaurantId: map['restaurantId'],
         branchId: map['branchId'],
         tableId: map['tableId'],
         tableName: map['tableName'],
         bankId: map['bankId'],
-        total: map['total'],
-        moneyCoupon: map['moneyCoupon'],
-        moneyDiscount: map['moneyDiscount'],
-        moneyUpfrontPay: map['moneyUpfrontPay'],
-        moneyReceived: map['moneyReceived'],
-        moneyChange: map['moneyChange'],
+        total: map['total'].toDouble(),
+        moneyCoupon: map['moneyCoupon'].toDouble(),
+        moneyDiscount: map['moneyDiscount'].toDouble(),
+        moneyUpfrontPay: map['moneyUpfrontPay'].toDouble(),
+        moneyReceived: map['moneyReceived'].toDouble(),
+        moneyChange: map['moneyChange'].toDouble(),
         isStatus: map['isStatus'],
         paymentType: map['paymentType'],
-        referenceNumber: map['referenceNumber'],
-        orderDetail: List<OrderDetail>.from(map['orderdetails']
-            .map((item) => OrderDetail.fromMap(item))
-            .toList()));
+        referenceNumber: map['referenceNumber']);
   }
-
+//Todo:  Fetch json data to object from API
   factory Order.fromJson(String source) => Order.fromMap(json.decode(source));
 
 //Todo:  Fetch json data to list object from API
-  static List<Order> parsePlayerList(String responseBody) {
+  static List<Order> parseOrderList(String responseBody) {
     final parse = json.decode(responseBody).cast<Map<String, dynamic>>();
-    return parse.map<Order>((data) => Order.fromJson(data)).toList();
+    return parse.map<Order>((data) => Order.fromMap(data)).toList();
   }
 
-  static Future<List<Order>> fetchPlayerList() async {
+  static Future<List<Order>> fetchOrderList() async {
     final response = await http.get(
         Uri.parse(url + "/orders/$restaurant_Id&$branch_Id"),
         headers: {'Authorization': token});
     if (response.statusCode == 200) {
-      return parsePlayerList(response.body);
+      return parseOrderList(response.body);
     } else if (response.statusCode == 403) {
       throw "No token accepted";
     } else {
@@ -184,11 +180,24 @@ class Order {
 //Todo: Post Order
   static Future<Order?> postOrder(Order order) async {
     final post = await http.post(Uri.parse(url + "/orders"),
-        body: order.toMap(), headers: {'Authorization': token});
+        headers: {'Authorization': token, 'content-type': 'application/json'},
+        body: order.toJson());
     if (post.statusCode == 201) {
       return Order.fromJson(post.body);
     } else {
-      return throw Exception();
+      throw Exception();
+    }
+  }
+
+  //Todo: Put Order
+  static Future<Order?> putOrder(Order order) async {
+    final post = await http.post(Uri.parse(url + "/orders/update"),
+        headers: {'Authorization': token, 'content-type': 'application/json'},
+        body: order.toJson());
+    if (post.statusCode == 201) {
+      return Order.fromJson(post.body);
+    } else {
+      throw Exception();
     }
   }
 }
@@ -201,6 +210,7 @@ class OrderDetail {
   int branchId;
   int tableId;
   int menuId;
+  String? menuName;
   int? bankId;
   double price;
   int amount;
@@ -217,6 +227,7 @@ class OrderDetail {
     required this.branchId,
     required this.tableId,
     required this.menuId,
+    required this.menuName,
     required this.bankId,
     required this.price,
     required this.amount,
@@ -248,6 +259,14 @@ class OrderDetail {
     };
   }
 
+  String toJson() => json.encode(toMap());
+
+  static String toListJson(List<OrderDetail> list) {
+    List josnList = [];
+    list.map((item) => josnList.add(item.toMap())).toList();
+    return jsonEncode(josnList); // Todo: json.encode(josnList)
+  }
+
   factory OrderDetail.fromMap(Map<String, dynamic> map) {
     return OrderDetail(
       id: map['id'],
@@ -256,10 +275,11 @@ class OrderDetail {
       branchId: map['branchId'],
       tableId: map['tableId'],
       menuId: map['menuId'],
+      menuName: map['menuName'],
       bankId: map['bankId'],
-      price: map['price'],
+      price: map['price'].toDouble(),
       amount: map['amount'],
-      total: map['total'],
+      total: map['total'].toDouble(),
       status: map['isStatus'],
       paymentType: map['paymentType'],
       comment: map['comment'],
@@ -268,18 +288,51 @@ class OrderDetail {
     );
   }
 
-  String toJson() => json.encode(toMap());
-
   factory OrderDetail.fromJson(String source) =>
       OrderDetail.fromMap(json.decode(source));
-}
 
-Future<OrderDetail> postOrderDetail(OrderDetail orderDetail) async {
-  final post = await http.post(Uri.parse(url + "/order-details"),
-      body: orderDetail.toMap(), headers: {'Authorization': token});
-  if (post.statusCode == 201) {
-    return OrderDetail.fromJson(post.body);
-  } else {
-    throw Exception();
+  //Todo:  Fetch json data to list object from API
+  static List<OrderDetail> parseOrderDetail(String responseBody) {
+    final parse = json.decode(responseBody).cast<Map<String, dynamic>>();
+    return parse.map<OrderDetail>((data) => OrderDetail.fromMap(data)).toList();
+  }
+
+  static Future<List<OrderDetail>> fetchOderDetail(int? orderId) async {
+    final response = await http.get(
+        Uri.parse(url + "/order-details/$restaurant_Id/$branch_Id&$orderId"),
+        headers: {'Authorization': token});
+    if (response.statusCode == 200) {
+      return OrderDetail.parseOrderDetail(response.body);
+    } else if (response.statusCode == 404) {
+      throw "ບໍ່ມີຂໍ້ມູນ";
+    } else {
+      throw "Net work error";
+    }
+  }
+
+  //Todo: Post Order Detail
+  static Future<List<OrderDetail>> postOrderDetail(
+      List<OrderDetail> orderDetail) async {
+    final post = await http.post(Uri.parse(url + "/order-details"),
+        headers: {'Authorization': token, 'content-type': 'application/json'},
+        body: toListJson(orderDetail));
+    if (post.statusCode == 201) {
+      return OrderDetail.parseOrderDetail(post.body);
+    } else {
+      throw Exception("Not data");
+    }
+  }
+
+  //Todo: Put Order Detail
+  static Future<List<OrderDetail>> putOrderDetail(
+      List<OrderDetail> orderDetail) async {
+    final post = await http.put(Uri.parse(url + "/order-details/update"),
+        headers: {'Authorization': token, 'content-type': 'application/json'},
+        body: toListJson(orderDetail));
+    if (post.statusCode == 201) {
+      return OrderDetail.parseOrderDetail(post.body);
+    } else {
+      throw Exception("Not data");
+    }
   }
 }

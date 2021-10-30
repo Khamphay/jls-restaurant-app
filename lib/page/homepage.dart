@@ -5,12 +5,13 @@ import 'package:restaurant_app/component/paymentlist.dart';
 import 'package:restaurant_app/component/payment.dart';
 import 'package:restaurant_app/component/menulist.dart';
 import 'package:restaurant_app/db/database_helper.dart';
+import 'package:restaurant_app/model/source.dart';
 import 'package:restaurant_app/page/setting_printerpage.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({Key? key, required this.restaurant, required this.tableId})
       : super(key: key);
-  final String restaurant;
+  final String? restaurant;
   final int tableId;
 
   @override
@@ -45,15 +46,17 @@ class _MenuPageState extends State<MenuPage> {
       initialIndex: 0,
       child: Scaffold(
           appBar: AppBar(
-             leading: IconButton(
+            leading: IconButton(
                 icon: const Icon(Icons.navigate_before_rounded, size: 40),
                 onPressed: () => Navigator.pop(context)),
-            title: Text(widget.restaurant),
+            title: Text("${widget.restaurant}"),
             elevation: 0,
             actions: [
               IconButton(
-                  onPressed: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const PrinterPage())),
+                  onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const PrinterPage())),
                   icon: const Icon(Icons.settings))
             ],
           ),
@@ -96,7 +99,7 @@ class _MenuPageState extends State<MenuPage> {
 final _itemPage = <Widget>[
   const MenuItems(),
   const OrderPage(),
-  const PaymentPage(showAppBar: false),
+  const PaymentPage(showAppBar: false, order: null, orderId: 0),
   const PaymentListPage()
 ];
 
