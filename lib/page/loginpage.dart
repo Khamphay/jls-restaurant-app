@@ -11,7 +11,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool _showPassword = true;
+  bool _showPassword =  true;
   bool isCheck = false;
   final _userController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -155,6 +155,7 @@ class _LoginPageState extends State<LoginPage> {
                                       username: _userController.text,
                                       password: _passwordController.text);
                                   final user = await fetchUser(login);
+
                                   if (user != null) {
                                     token = "Bearer ${user.token}";
                                     // restaurantId = user.restaurantId;
@@ -166,12 +167,15 @@ class _LoginPageState extends State<LoginPage> {
                                     await Navigator.pushNamed(
                                         context, "/homepage");
                                   } else {
-                                    SnackBar(
-                                      content: const Text(
-                                          "ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານບໍ່ຖຶກຕ້ອງ, ກະລຸນາລອງໃໝ່ອິກຄັ້ງ"),
-                                      action: SnackBarAction(
-                                          label: "OK", onPressed: () {}),
-                                    );
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            backgroundColor: Colors.deepPurple,
+                                            content:
+                                                 Text("ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານບໍ່ຖຶກຕ້ອງ", style:snackbar_text),
+                                            action: SnackBarAction(
+                                              label: 'OK',
+                                              onPressed: () {},
+                                            )));
                                   }
                                 }
                                 setState(() {});

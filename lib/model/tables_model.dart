@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:restaurant_app/model/responses.dart';
 
 import 'package:restaurant_app/model/source.dart';
 
@@ -86,12 +87,12 @@ Future<List<Tables>> fetchArrayTables() async {
 }*/
 //Todo:===================
 
-  static Future<int> putTables(Tables table) async {
+  static Future<ResponseModel> putTables(Tables table) async {
     final puttable = await http.put(Uri.parse(url + "/tables/update-status"),
         headers: {'Authorization': token, 'content-type': 'application/json'},
         body: table.toJson());
     if (puttable.statusCode == 201) {
-      return puttable.body.length;
+      return ResponseModel.fromJson(puttable.body);
     } else {
       throw Exception("Error");
     }

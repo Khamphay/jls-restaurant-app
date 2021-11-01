@@ -28,10 +28,11 @@ class _PaymentPageState extends State<PaymentPage> {
   int _discount = 0, _qty = 0;
   double _sumPrice = 0, _paid = 0;
   String _warning = "";
- late SummaryOrder summary;
+  late SummaryOrder summary;
   late Future<List<OrderDetail>> orderMenu;
   var couponController = TextEditingController();
   var orderid, tableId;
+  var orderdetails;
   @override
   void initState() {
     super.initState();
@@ -130,6 +131,11 @@ class _PaymentPageState extends State<PaymentPage> {
                   return ListView.builder(
                       itemCount: snapshot.data!.length,
                       itemBuilder: (context, index) {
+                        if (snapshot.data![index].status == "cancel") {
+                          return const SizedBox(
+                            height: 0,
+                          );
+                        }
                         _sumPrice += snapshot.data![index].total;
                         _qty += snapshot.data![index].amount;
                         return Column(
@@ -179,28 +185,35 @@ class _PaymentPageState extends State<PaymentPage> {
               labelBackgroundColor: Colors.blueAccent.shade100,
               label: "ຈ່າຍຜ່ານ QR Code",
               child: const Icon(Icons.qr_code_2_rounded),
-              onTap: () => (summary.qty > 0 && summary.allMoneyPay > 0)
-                  ? Navigator.push(
+              onTap: () async {
+                if (summary.qty > 0 && summary.allMoneyPay > 0) {
+                  final orderdetails = await orderMenu;
+                  Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => BankPager(summary: summary)))
-                  : null),
+                          builder: (context) => BankPager(
+                              summary: summary, orderdetails: orderdetails)));
+                } else {
+                  null;
+                }
+              }),
           SpeedDialChild(
               backgroundColor: Colors.green.shade100,
               labelBackgroundColor: Colors.green.shade100,
               label: "ຈ່າຍເງີນສົດ",
               child: const Icon(Icons.payments_outlined),
-              onTap: (summary.qty > 0 && summary.allMoneyPay > 0)
-                  ? () async {
-                      final orderdetails = await orderMenu;
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => CashPayment(
-                                  summary: summary,
-                                  orderdetails: orderdetails)));
-                    }
-                  : null)
+              onTap: () async {
+                if (summary.qty > 0 && summary.allMoneyPay > 0) {
+                  final orderdetails = await orderMenu;
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => CashPayment(
+                              summary: summary, orderdetails: orderdetails)));
+                } else {
+                  null;
+                }
+              })
         ],
       ),
     );

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_app/model/bank_model.dart';
+import 'package:restaurant_app/model/ordermenu_model.dart';
 import 'package:restaurant_app/model/source.dart';
 import 'package:restaurant_app/model/summary.dart';
 import 'package:restaurant_app/page/qrcode_paypage.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class BankPager extends StatefulWidget {
-  const BankPager({Key? key, required this.summary}) : super(key: key);
+  const BankPager({Key? key, required this.summary, required this.orderdetails})
+      : super(key: key);
   final SummaryOrder summary;
+  final List<OrderDetail> orderdetails;
+
   @override
   State<BankPager> createState() => _BankPagerState();
 }
@@ -22,7 +26,8 @@ class _BankPagerState extends State<BankPager> {
     final Orientation _orientation = MediaQuery.of(context).orientation;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("ເລືອກທະນາຄານ"),
+      appBar: AppBar(
+        title: const Text("ເລືອກທະນາຄານ"),
         leading: IconButton(
             icon: const Icon(Icons.navigate_before_rounded, size: 40),
             onPressed: () => Navigator.pop(context)),
@@ -75,7 +80,9 @@ class _BankPagerState extends State<BankPager> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (contex) => QRCodePayment(
-                                        bank: bank, summary: widget.summary)));
+                                        bank: bank,
+                                        summary: widget.summary,
+                                        orderdetails: widget.orderdetails)));
                           },
                         ),
                       )),

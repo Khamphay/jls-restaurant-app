@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:restaurant_app/model/responses.dart';
 
 import 'package:restaurant_app/model/source.dart';
 
@@ -118,7 +119,7 @@ class Order {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'orderId': id,
       'restaurantId': restaurantId,
       'branchId': branchId,
       'tableId': tableId,
@@ -190,12 +191,14 @@ class Order {
   }
 
   //Todo: Put Order
-  static Future<Order?> putOrder(Order order) async {
-    final post = await http.post(Uri.parse(url + "/orders/update"),
+  static Future<ResponseModel> putOrder(Order order) async {
+    final post = await http.put(Uri.parse(url + "/orders/update"),
         headers: {'Authorization': token, 'content-type': 'application/json'},
         body: order.toJson());
     if (post.statusCode == 201) {
-      return Order.fromJson(post.body);
+      return ResponseModel.fromJson(post.body);
+    } else if (post.statusCode == 401) {
+      return ResponseModel.fromJson(post.body);
     } else {
       throw Exception();
     }
@@ -241,7 +244,7 @@ class OrderDetail {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
+      'orderDetaiId': id,
       'orderId': orderId,
       'restaurantId': restaurantId,
       'branchId': branchId,
@@ -324,15 +327,16 @@ class OrderDetail {
   }
 
   //Todo: Put Order Detail
-  static Future<List<OrderDetail>> putOrderDetail(
-      List<OrderDetail> orderDetail) async {
+  static Future<ResponseModel> putOrderDetail(OrderDetail orderDetail) async {
     final post = await http.put(Uri.parse(url + "/order-details/update"),
         headers: {'Authorization': token, 'content-type': 'application/json'},
-        body: toListJson(orderDetail));
+        body: orderDetail.toJson());
     if (post.statusCode == 201) {
-      return OrderDetail.parseOrderDetail(post.body);
+      return ResponseModel.fromJson(post.body);
+    } else if (post.statusCode == 401) {
+      return ResponseModel.fromJson(post.body);
     } else {
-      throw Exception("Not data");
+      throw Exception("Error: " + post.body);
     }
   }
 }

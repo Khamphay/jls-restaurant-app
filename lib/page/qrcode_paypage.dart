@@ -1,19 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_app/model/bank_model.dart';
+import 'package:restaurant_app/model/ordermenu_model.dart';
 import 'package:restaurant_app/model/source.dart';
 import 'package:restaurant_app/model/summary.dart';
+import 'package:restaurant_app/model/tables_model.dart';
 import 'package:restaurant_app/style/textstyle.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class QRCodePayment extends StatelessWidget {
-  const QRCodePayment({Key? key, required this.bank, required this.summary})
+  const QRCodePayment(
+      {Key? key,
+      required this.bank,
+      required this.summary,
+      required this.orderdetails})
       : super(key: key);
   final Banks bank;
   final SummaryOrder summary;
+  final List<OrderDetail> orderdetails;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("ຈ່າຍຜ່ານທະນາຄານ ${bank.bank}"),
+        appBar: AppBar(
+          title: Text("ຈ່າຍຜ່ານທະນາຄານ ${bank.bank}"),
           leading: IconButton(
               icon: const Icon(Icons.navigate_before_rounded, size: 40),
               onPressed: () => Navigator.pop(context)),
@@ -118,7 +127,86 @@ class QRCodePayment extends StatelessWidget {
                                     child: Center(
                                         child: Text("ຢືນຢັນການຊຳລະ",
                                             style: head3)),
-                                    onTap: () => {}),
+                                    onTap: () async {
+                                      final table = Tables(
+                                          id: table_Id,
+                                          restaurantId: restaurant_Id,
+                                          restaurantName: null,
+                                          branchId: branch_Id,
+                                          branchName: null,
+                                          phone: null,
+                                          status: "empty",
+                                          table: null);
+                                      final tables =
+                                          await Tables.putTables(table);
+                                      if (tables.data! > 0) {
+                                        final order = Order(
+                                            id: summary.orderId,
+                                            restaurantId: restaurant_Id,
+                                            branchId: branch_Id,
+                                            tableId: summary.tableId,
+                                            tableName: null,
+                                            bankId: bank.id,
+                                            total: summary.totalPrice,
+                                            moneyCoupon: summary.moneyDiscount,
+                                            moneyDiscount:
+                                                summary.moneyDiscount,
+                                            moneyUpfrontPay: 0,
+                                            moneyReceived: 0,
+                                            moneyChange: 0,
+                                            isStatus: "success",
+                                            paymentType: "bank",
+                                            referenceNumber: null);
+                                        final put = await Order.putOrder(order);
+                                        if (put.data != null && put.data == 1) {
+                                          for (final item in orderdetails) {
+                                            final orderDetail = OrderDetail(
+                                                id: item.id,
+                                                orderId: summary.orderId,
+                                                restaurantId: restaurant_Id,
+                                                branchId: branch_Id,
+                                                tableId: summary.tableId,
+                                                menuId: item.menuId,
+                                                menuName: null,
+                                                bankId: bank.id,
+                                                price: item.price,
+                                                amount: item.amount,
+                                                total: item.total,
+                                                status: 'paid',
+                                                paymentType: "bank",
+                                                comment: null,
+                                                reason: null,
+                                                referenceNumber: null);
+
+                                            await OrderDetail.putOrderDetail(
+                                                orderDetail);
+                                          }
+                                           ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                                  backgroundColor:
+                                                      Colors.deepPurple,
+                                                  content: Text(
+                                                      "ການຊຳລະເງີນສຳເລັດແລ້ວ",
+                                                      style: snackbar_text),
+                                                  action: SnackBarAction(
+                                                    label: 'OK',
+                                                    onPressed: () {},
+                                                  )));
+                                        } else {
+                                           ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                                  backgroundColor:
+                                                      Colors.deepPurple,
+                                                  content: put.message != null
+                                                      ? Text("${put.message}")
+                                                      : Text("${put.error}"),
+                                                  action: SnackBarAction(
+                                                    label: 'OK',
+                                                    onPressed: () {},
+                                                  )));
+                                        }
+                                      }
+                                    }),
                               ),
                             ],
                           ),

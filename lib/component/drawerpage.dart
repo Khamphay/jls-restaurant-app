@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 Widget myDrawer(BuildContext context) {
   return ListView(
@@ -10,8 +9,8 @@ Widget myDrawer(BuildContext context) {
           color: Colors.blue,
           child: Center(
               child: Column(
-            children: [
-              CircleAvatar(
+            children:const [
+               CircleAvatar(
                   child: FlutterLogo(
                 size: 50,
               ))

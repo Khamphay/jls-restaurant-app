@@ -400,11 +400,19 @@ class _MenuItemsState extends State<MenuItems> {
                               ? Navigator.of(context).pop(true)
                               : Navigator.of(context).pop(false);
                         } else {
-                          await createOrder(
-                                      id, menuName, _price, _qty, _sum, image) >
-                                  0
-                              ? Navigator.of(context).pop(true)
-                              : Navigator.of(context).pop(false);
+                          int order = await createOrder(
+                              id, menuName, _price, _qty, _sum, image);
+                          if (order > 0) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              backgroundColor: Colors.deepPurple,
+                              content:  Text("ສັ່ງ $menuName ຈຳນວນ: $_qty"),
+                              action:
+                                  SnackBarAction(label: "OK", onPressed: () {}),
+                            ));
+                            Navigator.of(context).pop(true);
+                          } else {
+                            Navigator.of(context).pop(false);
+                          }
                         }
                       },
                       child: const Text("ຢຶນຢັນ"))

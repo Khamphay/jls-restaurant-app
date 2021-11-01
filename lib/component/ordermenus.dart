@@ -125,7 +125,8 @@ class _OrderPageState extends State<OrderPage> {
                             phone: null,
                             status: "reserved",
                             table: null);
-                        await Tables.putTables(table) > 0
+                        final putTable = await Tables.putTables(table);
+                        (putTable.data! > 0)
                             ? await deleteAllOrder() > 0
                                 ? orderList.removeRange(0, orderList.length)
                                 : null
@@ -133,7 +134,8 @@ class _OrderPageState extends State<OrderPage> {
                         setState(() {});
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             backgroundColor: Colors.grey,
-                            content: const Text("ຢືນຢັນ Order ສຳເລັດແລ້ວ"),
+                            content: Text("ຢືນຢັນ Order ສຳເລັດແລ້ວ",
+                                style: snackbar_text),
                             action: SnackBarAction(
                               label: 'OK',
                               onPressed: () {},
@@ -451,8 +453,8 @@ class _OrderPageState extends State<OrderPage> {
               orderList.removeRange(0, orderList.length),
               setState(() {}),
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  backgroundColor: Colors.grey,
-                  content: const Text("ຍົກເລິກສຳເລັດແລ້ວ"),
+                  backgroundColor: Colors.deepPurple,
+                  content: Text("ຍົກເລິກສຳເລັດແລ້ວ", style: snackbar_text),
                   action: SnackBarAction(
                     label: 'OK',
                     onPressed: () {},

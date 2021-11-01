@@ -19,7 +19,7 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, dbname);
     return await openDatabase(path,
-        version: 2, onCreate: _createTB, onUpgrade: _upgradeTB);
+        version: 2, onCreate: _createTB /*, onUpgrade: _upgradeTB*/);
   }
 
   FutureOr<void> _createTB(Database db, int version) async {
@@ -28,16 +28,17 @@ class DatabaseHelper {
   ${OrderFields.menuName} TEXT NOT NULL, 
   ${OrderFields.price} REAL NOT NULL,
   ${OrderFields.qty} INTEGER NOT NULL, 
-  ${OrderFields.totalPrice} REAL NOT NULL);
+  ${OrderFields.totalPrice} REAL NOT NULL,
+  ${OrderFields.image} TEXT NOT NULL);
   ''');
   }
 
-  FutureOr<void> _upgradeTB(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < newVersion) {
-      await db.execute(
-          '''ALTER TABLE  $tableName ADD COLUMN ${OrderFields.image} TEXT NULL''');
-    }
-  }
+  // FutureOr<void> _upgradeTB(Database db, int oldVersion, int newVersion) async {
+  //   if (oldVersion < newVersion) {
+  //     await db.execute(
+  //         '''ALTER TABLE  $tableName ADD COLUMN ${OrderFields.image} TEXT NULL''');
+  //   }
+  // }
 
   Future<OrderMenu?> readOrderById(int id) async {
     final db = await dbInstace.database;
