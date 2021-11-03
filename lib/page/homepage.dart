@@ -5,8 +5,8 @@ import 'package:restaurant_app/component/paymentlist.dart';
 import 'package:restaurant_app/component/payment.dart';
 import 'package:restaurant_app/component/menulist.dart';
 import 'package:restaurant_app/db/database_helper.dart';
-import 'package:restaurant_app/model/source.dart';
 import 'package:restaurant_app/page/setting_printerpage.dart';
+import 'package:restaurant_app/style/color.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({Key? key, required this.restaurant, required this.tableId})
@@ -46,6 +46,7 @@ class _MenuPageState extends State<MenuPage> {
       initialIndex: 0,
       child: Scaffold(
           appBar: AppBar(
+            backgroundColor: prmColor,
             leading: IconButton(
                 icon: const Icon(Icons.navigate_before_rounded, size: 40),
                 onPressed: () => Navigator.pop(context)),
@@ -76,11 +77,8 @@ class _MenuPageState extends State<MenuPage> {
             badgeMargin:
                 const EdgeInsets.only(left: 25, top: 0, bottom: 30, right: 0),
             backgroundColor: const Color.fromARGB(255, 128, 0, 255),
-            gradient: const LinearGradient(begin: Alignment.topCenter, colors: [
-              Color.fromARGB(255, 128, 0, 255),
-              Color.fromARGB(255, 179, 102, 255),
-              Color.fromARGB(255, 153, 51, 255),
-            ]),
+            gradient: const LinearGradient(
+                begin: Alignment.topCenter, colors: linearColor),
             style: TabStyle.reactCircle,
             items: <TabItem>[
               for (final tab in menuIcon.entries)
@@ -99,7 +97,7 @@ class _MenuPageState extends State<MenuPage> {
 final _itemPage = <Widget>[
   const MenuItems(),
   const OrderPage(),
-   const PaymentPage(showAppBar: false, order: null),
+  const PaymentPage(showAppBar: false, order: null),
   const PaymentListPage()
 ];
 

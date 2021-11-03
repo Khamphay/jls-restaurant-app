@@ -11,4 +11,4 @@ TextStyle head3 = const TextStyle(
 
 TextStyle subtitle = const TextStyle(color: Colors.black);
 
-TextStyle snackbar_text=const TextStyle(fontSize: 15);
+TextStyle snackbar_text = const TextStyle(fontSize: 15);

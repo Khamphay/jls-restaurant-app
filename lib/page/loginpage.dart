@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_app/model/login_model.dart';
 import 'package:restaurant_app/model/source.dart';
+import 'package:restaurant_app/style/color.dart';
 import 'package:restaurant_app/style/textstyle.dart';
 
 class LoginPage extends StatefulWidget {
@@ -28,11 +29,7 @@ class _LoginPageState extends State<LoginPage> {
         body: Container(
       width: double.infinity,
       decoration: const BoxDecoration(
-          gradient: LinearGradient(begin: Alignment.topCenter, colors: [
-        Color.fromARGB(255, 128, 0, 255),
-        Color.fromARGB(255, 179, 102, 255),
-        Color.fromARGB(255, 204, 153, 255),
-      ])),
+          gradient: LinearGradient(begin: Alignment.topCenter, colors: linearColor )),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

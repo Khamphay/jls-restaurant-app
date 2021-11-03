@@ -62,7 +62,7 @@ class _MenuItemsState extends State<MenuItems> {
           Container(
             height: 60,
             width: double.infinity,
-            color: primaryColor.withOpacity(0.9),
+            color: blueColor.withOpacity(0.9),
             child: FutureBuilder<List<Category>>(
               future: categories,
               builder: (context, snapshot) {
