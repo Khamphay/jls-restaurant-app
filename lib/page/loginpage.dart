@@ -11,7 +11,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool _showPassword =  true;
+  bool _showPassword = true;
   bool isCheck = false;
   final _userController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -129,58 +129,53 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(
                           height: 40,
                         ),
-                        Container(
-                            width: double.infinity,
-                            height: 40,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: const Color.fromARGB(255, 128, 0, 255)),
-                            child: InkWell(
-                              child: Center(
-                                child: Text(
-                                  "ເຂົ້າສູ່ລະບົບ",
-                                  style: head3,
-                                ),
-                              ),
-                              onTap: () async {
-                                emptyUsername = _userController.text.isEmpty
-                                    ? "ກະລຸນາປ້ອນຊື່ຜູ້ໃຊ້"
-                                    : emptyUsername = "";
-                                emptyPassword = _passwordController.text.isEmpty
-                                    ? "ກະລຸນາປ້ອນລະຫັດຜ່ານ"
-                                    : "";
-                                if (_userController.text.isNotEmpty &&
-                                    _passwordController.text.isNotEmpty) {
-                                  final login = Login(
-                                      username: _userController.text,
-                                      password: _passwordController.text);
-                                  final user = await fetchUser(login);
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              fixedSize: const Size(double.maxFinite, 40)),
+                          child: Text(
+                            "ເຂົ້າສູ່ລະບົບ",
+                            style: head3,
+                          ),
+                          onPressed: () async {
+                             const CircularProgressIndicator();
+                            emptyUsername = _userController.text.isEmpty
+                                ? "ກະລຸນາປ້ອນຊື່ຜູ້ໃຊ້"
+                                : emptyUsername = "";
+                            emptyPassword = _passwordController.text.isEmpty
+                                ? "ກະລຸນາປ້ອນລະຫັດຜ່ານ"
+                                : "";
+                            if (_userController.text.isNotEmpty &&
+                                _passwordController.text.isNotEmpty) {
+                              final login = Login(
+                                  username: _userController.text,
+                                  password: _passwordController.text);
+                              final user = await fetchUser(login);
 
-                                  if (user != null) {
-                                    token = "Bearer ${user.token}";
-                                    // restaurantId = user.restaurantId;
-                                    // restaurantName = user.restaurantName;
-                                    // branchId = user.branchId;
-                                    // branchName = user.branchName;
-                                    _userController.text = "";
-                                    _passwordController.text = "";
-                                    await Navigator.pushNamed(
-                                        context, "/homepage");
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            backgroundColor: Colors.deepPurple,
-                                            content:
-                                                 Text("ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານບໍ່ຖຶກຕ້ອງ", style:snackbar_text),
-                                            action: SnackBarAction(
-                                              label: 'OK',
-                                              onPressed: () {},
-                                            )));
-                                  }
-                                }
-                                setState(() {});
-                              },
-                            ))
+                              if (user != null) {
+                                token = "Bearer ${user.token}";
+                                // restaurantId = user.restaurantId;
+                                // restaurantName = user.restaurantName;
+                                // branchId = user.branchId;
+                                // branchName = user.branchName;
+                                _userController.text = "";
+                                _passwordController.text = "";
+                                await Navigator.pushNamed(context, "/homepage");
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        backgroundColor: Colors.deepPurple,
+                                        content: Text(
+                                            "ຊື່ຜູ້ໃຊ້ ຫຼື ລະຫັດຜ່ານບໍ່ຖຶກຕ້ອງ",
+                                            style: snackbar_text),
+                                        action: SnackBarAction(
+                                          label: 'OK',
+                                          onPressed: () {},
+                                        )));
+                              }
+                            }
+                            setState(() {});
+                          },
+                        )
                       ]),
                       const SizedBox(
                         height: 50,

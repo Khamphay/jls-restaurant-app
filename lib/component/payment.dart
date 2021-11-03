@@ -9,15 +9,10 @@ import 'package:restaurant_app/page/cash_paypage.dart';
 import 'package:restaurant_app/style/textstyle.dart';
 
 class PaymentPage extends StatefulWidget {
-  const PaymentPage(
-      {Key? key,
-      required this.showAppBar,
-      required this.order,
-      required this.orderId})
+  const PaymentPage({Key? key, required this.showAppBar, required this.order})
       : super(key: key);
   final bool showAppBar;
   final Order? order;
-  final int? orderId;
 
   @override
   _PaymentPageState createState() => _PaymentPageState();
@@ -36,7 +31,7 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   void initState() {
     super.initState();
-    orderid = widget.order != null ? widget.order!.id : widget.orderId;
+    orderid = widget.order != null ? widget.order!.id : order_Id;
     tableId = widget.order != null ? widget.order!.tableId : table_Id;
     orderMenu = OrderDetail.fetchOderDetail(orderid);
     summary = SummaryOrder(
@@ -89,34 +84,27 @@ class _PaymentPageState extends State<PaymentPage> {
                               labelText: "ໃສ່ລະຫັດສ່ວນຫຼຸດ",
                               errorText: (_warning != "") ? _warning : null),
                         )),
-                    // const SizedBox(width:10),
-                    Container(
-                      height: 48,
-                      padding: const EdgeInsets.only(left: 20, right: 20),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          // border: Border.all(width: 1),
-                          color: Colors.deepPurple),
-                      child: InkWell(
-                          child: Center(child: Text("ກວດສອບ", style: head3)),
-                          onTap: () async {
-                            if (couponController.text == "") return;
-                            final coupon =
-                                await fetchCoupons(couponController.text);
-                            if (coupon == null) {
-                              _warning = "ບໍ່ມີຄູ່ປອງນີ້";
-                            } else if (coupon.isUse == true) {
-                              _warning = "ຄູ່ປອງນີ້ຖືໃຊ້ແລ້ວ";
-                            } else if (coupon.dateExit
-                                .isBefore(DateTime.now())) {
-                              _warning = "ຄູ່ປອງນີ້ໝົດອາຍູແລ້ວ";
-                            } else {
-                              _discount = coupon.percentDiscount;
-                              _warning = "";
-                            }
-                            setState(() {});
-                          }),
-                    ),
+                    ElevatedButton(
+                        child: Center(child: Text("ກວດສອບ", style: head3)),
+                        style: ElevatedButton.styleFrom(
+                            // primary: Colors.red.shade700,
+                            fixedSize: const Size(double.infinity, 46)),
+                        onPressed: () async {
+                          if (couponController.text == "") return;
+                          final coupon =
+                              await fetchCoupons(couponController.text);
+                          if (coupon == null) {
+                            _warning = "ບໍ່ມີຄູ່ປອງນີ້";
+                          } else if (coupon.isUse == true) {
+                            _warning = "ຄູ່ປອງນີ້ຖືໃຊ້ແລ້ວ";
+                          } else if (coupon.dateExit.isBefore(DateTime.now())) {
+                            _warning = "ຄູ່ປອງນີ້ໝົດອາຍູແລ້ວ";
+                          } else {
+                            _discount = coupon.percentDiscount;
+                            _warning = "";
+                          }
+                          setState(() {});
+                        }),
                   ],
                 )),
             const Divider(),

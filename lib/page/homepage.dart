@@ -99,7 +99,7 @@ class _MenuPageState extends State<MenuPage> {
 final _itemPage = <Widget>[
   const MenuItems(),
   const OrderPage(),
-  const PaymentPage(showAppBar: false, order: null, orderId: 0),
+   const PaymentPage(showAppBar: false, order: null),
   const PaymentListPage()
 ];
 

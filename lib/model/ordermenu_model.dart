@@ -92,6 +92,7 @@ class Order {
   String? tableName;
   int? bankId;
   double total;
+  int? amount;
   double moneyCoupon;
   double moneyDiscount;
   double moneyUpfrontPay;
@@ -108,6 +109,7 @@ class Order {
       required this.tableName,
       required this.bankId,
       required this.total,
+      required this.amount,
       required this.moneyCoupon,
       required this.moneyDiscount,
       required this.moneyUpfrontPay,
@@ -147,6 +149,7 @@ class Order {
         tableName: map['tableName'],
         bankId: map['bankId'],
         total: map['total'].toDouble(),
+        amount: map['amount'],
         moneyCoupon: map['moneyCoupon'].toDouble(),
         moneyDiscount: map['moneyDiscount'].toDouble(),
         moneyUpfrontPay: map['moneyUpfrontPay'].toDouble(),

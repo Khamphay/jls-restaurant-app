@@ -94,7 +94,7 @@ class PaymentListPage extends StatelessWidget {
                                                 MainAxisAlignment.start,
                                             children: [
                                               Text(
-                                                  "${snapshot.data![index].id} ລາຍການ"),
+                                                  "${snapshot.data![index].amount} ລາຍການ"),
                                               Text(
                                                   "${snapshot.data![index].total} ກີບ"),
                                               Text(
@@ -114,12 +114,13 @@ class PaymentListPage extends StatelessWidget {
                                                       Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
-                                                              builder: (context) => PaymentPage(
-                                                                  showAppBar:
-                                                                      true,
-                                                                  order: snapshot
-                                                                          .data![
-                                                                      index],orderId: null)));
+                                                              builder: (context) =>
+                                                                  PaymentPage(
+                                                                      showAppBar:
+                                                                          true,
+                                                                      order: snapshot
+                                                                              .data![
+                                                                          index])));
                                                     }
                                                   : null,
                                           child: const Text("ຊຳລະເງີນ"))

@@ -15,8 +15,8 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
-          fontFamily: 'Boonbaan',
           primarySwatch: Colors.deepPurple,
+          fontFamily: 'NotoSansLao'
         ),
         home: const LoginPage(),
         routes: {

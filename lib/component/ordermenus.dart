@@ -48,127 +48,96 @@ class _OrderPageState extends State<OrderPage> {
       height: double.infinity,
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          ButtonBar(
+            alignment: MainAxisAlignment.spaceAround,
             children: [
-              Container(
-                margin: const EdgeInsets.all(10),
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                height: 45,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  // border: Border.all(width: 1, color: Colors.green),
-                  color: Colors.green,
-                ),
-                child: InkWell(
-                  child: Center(
-                      child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Icon(Icons.done_all_rounded,
-                          color: Colors.white, size: 30),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Text("ຢືນຢັນການສັ່ງ", style: head3)
-                    ],
-                  )),
-                  onTap: () async {
-                    final order = Order(
-                        id: null,
-                        restaurantId: restaurant_Id,
-                        branchId: branch_Id,
-                        tableId: table_Id,
-                        tableName: null,
-                        bankId: null,
-                        total: totalPrice,
-                        moneyCoupon: 0,
-                        moneyDiscount: 0,
-                        moneyUpfrontPay: 0,
-                        moneyReceived: 0,
-                        moneyChange: 0,
-                        isStatus: 'pending',
-                        paymentType: "pending",
-                        referenceNumber: null);
-                    final post = await Order.postOrder(order);
-                    if (post?.id != null) {
-                      final orderid = post?.id;
-                      var orderDetail = <OrderDetail>[];
-                      for (var item in orderList) {
-                        orderDetail.add(OrderDetail(
-                            id: null,
-                            orderId: orderid ?? 0,
-                            restaurantId: restaurant_Id,
-                            branchId: branch_Id,
-                            tableId: table_Id,
-                            menuId: item.id,
-                            menuName: item.menuName, // can be null
-                            bankId: null,
-                            price: item.price,
-                            amount: item.qty,
-                            total: item.totalPrice,
-                            status: "order",
-                            paymentType: "pending",
-                            comment: null,
-                            reason: null,
-                            referenceNumber: null));
-                      }
-                      final orderdetail =
-                          await OrderDetail.postOrderDetail(orderDetail);
-                      if (orderdetail.isNotEmpty) {
-                        final table = Tables(
-                            id: table_Id,
-                            restaurantId: restaurant_Id,
-                            restaurantName: null,
-                            branchId: branch_Id,
-                            branchName: null,
-                            phone: null,
-                            status: "reserved",
-                            table: null);
-                        final putTable = await Tables.putTables(table);
-                        (putTable.data! > 0)
-                            ? await deleteAllOrder() > 0
-                                ? orderList.removeRange(0, orderList.length)
-                                : null
-                            : null;
-                        setState(() {});
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            backgroundColor: Colors.grey,
-                            content: Text("ຢືນຢັນ Order ສຳເລັດແລ້ວ",
-                                style: snackbar_text),
-                            action: SnackBarAction(
-                              label: 'OK',
-                              onPressed: () {},
-                            )));
-                      }
+              ElevatedButton.icon(
+                icon: const Icon(Icons.done_all_rounded,
+                    color: Colors.white, size: 30),
+                label: Text("ຢືນຢັນການສັ່ງ", style: head3),
+                style: ElevatedButton.styleFrom(
+                    primary: Colors.green.shade700,
+                    fixedSize: const Size(double.infinity, 40)),
+                onPressed: () async {
+                  final order = Order(
+                      id: null,
+                      restaurantId: restaurant_Id,
+                      branchId: branch_Id,
+                      tableId: table_Id,
+                      tableName: null,
+                      bankId: null,
+                      total: totalPrice,
+                      amount: null,
+                      moneyCoupon: 0,
+                      moneyDiscount: 0,
+                      moneyUpfrontPay: 0,
+                      moneyReceived: 0,
+                      moneyChange: 0,
+                      isStatus: 'pending',
+                      paymentType: "pending",
+                      referenceNumber: null);
+                  final post = await Order.postOrder(order);
+                  if (post?.id != null) {
+                    final orderid = order_Id = post?.id;
+                    var orderDetail = <OrderDetail>[];
+                    for (var item in orderList) {
+                      orderDetail.add(OrderDetail(
+                          id: null,
+                          orderId: orderid ?? 0,
+                          restaurantId: restaurant_Id,
+                          branchId: branch_Id,
+                          tableId: table_Id,
+                          menuId: item.id,
+                          menuName: item.menuName, // can be null
+                          bankId: null,
+                          price: item.price,
+                          amount: item.qty,
+                          total: item.totalPrice,
+                          status: "order",
+                          paymentType: "pending",
+                          comment: null,
+                          reason: null,
+                          referenceNumber: null));
                     }
-                  },
-                ),
+                    final orderdetail =
+                        await OrderDetail.postOrderDetail(orderDetail);
+                    if (orderdetail.isNotEmpty) {
+                      final table = Tables(
+                          id: table_Id,
+                          restaurantId: restaurant_Id,
+                          restaurantName: null,
+                          branchId: branch_Id,
+                          branchName: null,
+                          phone: null,
+                          status: "reserved",
+                          table: null);
+                      final putTable = await Tables.putTables(table);
+                      (putTable.data! > 0)
+                          ? await deleteAllOrder() > 0
+                              ? orderList.removeRange(0, orderList.length)
+                              : null
+                          : null;
+                      setState(() {});
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          backgroundColor: Colors.deepPurple,
+                          content: Text("ຢືນຢັນ Order ສຳເລັດແລ້ວ",
+                              style: snackbar_text),
+                          action: SnackBarAction(
+                            label: 'OK',
+                            onPressed: () {},
+                          )));
+                    }
+                  }
+                },
               ),
-              Container(
-                margin: const EdgeInsets.all(10),
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                height: 45,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  // border: Border.all(width: 0, color: Colors.deepPurple),
-                  color: Colors.red.shade800,
-                ),
-                child: InkWell(
-                  child: Center(
-                      child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      const Icon(Icons.delete_forever,
-                          color: Colors.white, size: 30),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Text("ຍົກເລີກທັງໝົດ", style: head3)
-                    ],
-                  )),
-                  onTap: () => cancelAllOrderDialog(),
-                ),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.delete_forever,
+                    color: Colors.white, size: 30),
+                label: Text("ຍົກເລີກທັງໝົດ", style: head3),
+                style: ElevatedButton.styleFrom(
+                    primary: Colors.red.shade700,
+                    fixedSize: const Size(double.infinity, 40)),
+                onPressed: () => cancelAllOrderDialog(),
               ),
             ],
           ),

@@ -76,16 +76,18 @@ flutter:
 # list giving the asset and other descriptors for the font. For
 # example:
 fonts:
-  - family: Boonbaan
+  - family: BoonBaan
     fonts:
-      - asset: fonts/Boonbaan-regular.ttf
-      - asset: fonts/Boonbaan-bold.ttf
-        style: bold
-  - family: Notosanlao
+      - asset: fonts/BoonBaan-Regular.ttf
+      - asset: fonts/BoonBaan-Bold.ttf
+        weight: 700
+      - asset: fonts/BoonBaan-Italic.ttf
+        style: italic
+  - family: NotoSansLao
     fonts:
-      - asset: fonts/Notosanlao-bold.ttf
-#       - asset: fonts/TrajanPro_Bold.ttf
-#         weight: 700
+      - asset: fonts/NotoSansLao-Regular.ttf
+      - asset: fonts/NotoSansLao-Bold.ttf
+        weight: 700
 #
 # For details regarding fonts from package dependencies,
 # see https://flutter.dev/custom-fonts/#from-packages
